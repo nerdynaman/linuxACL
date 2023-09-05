@@ -153,14 +153,11 @@ int checkAcessPerms(char* path, char* user, char* perm){
         }
     }
     if (validUser==1){
-        for (k=0 ; k<aclList->userPerms[i].size() ; k++){ // check if the given permission is present in the acl list, if not then return -1
-            if (cmp(aclList->userPerms[i][k],perm) == 0){
-                validPerm = 1;
-                return 0;
-            }
+        // check if for the validated user permission is there or not
+        if (cmp(perm,aclList->userPerms[i][j]) == 0){
+            validPerm = 1;
+            return 0;
         }
-        cout << perm << endl;
-        cout << aclList->userPerms[i][k-1] << endl;
         return -12;
     }
 
