@@ -1,4 +1,5 @@
 #include"setfacl.hh"
+#include<pwd.h>
 using namespace std;
 //done first we check if the user calling this program is root or owner of the file
 //done second we check if the file exists
@@ -23,7 +24,13 @@ int main(int argc, char *argv[]){
         setuid(getuid());
         return 0;
     }
-
+    const char *user = argv[3];
+    struct passwd *pw = getpwnam(user);
+    if (pw == NULL){
+        printf("User does not exist\n");
+        setuid(getuid());
+        return 0;
+    }
     if (strcmp(argv[1],"-m") == 0){
         if(access(argv[5],F_OK) == -1){
             printf("File does not exist\n");
