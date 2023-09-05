@@ -18,6 +18,7 @@ int getfacl(){
         }
         printf("\n");
     }
+    setuid(getuid());
     return 0;
 }
 
