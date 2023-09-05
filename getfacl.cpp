@@ -10,7 +10,7 @@ int getfacl(){
     for (int i=0 ; i<aclList->users.size() ; i++){
         printf("%s: ",aclList->path[i]);
         for (int j=0 ; j<aclList->users[i].size() ; j++){
-            printf("%s \n",aclList->users[i][j]);
+            printf("%s ",aclList->users[i][j]);
         }
         printf(": ");
         for (int j=0 ; j<aclList->userPerms[i].size() ; j++){

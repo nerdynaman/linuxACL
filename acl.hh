@@ -3,6 +3,8 @@
 #include<cstring>
 #include<queue>
 #include<stdio.h>
+#include<sys/stat.h>
+#include<unistd.h>
 using namespace std;
 
 struct acl{
@@ -11,6 +13,26 @@ struct acl{
     deque<deque<char*> > userPerms;
 };
 char* path = "/Users/namanaggarwal/Desktop/IIITD/sem5/NSS1/Assignment1/acl.txt";
+
+int cmp(char* a, char* b){
+    // check if characters of a is part of b
+    // if yes then return 0 else return -1
+    int i=0;
+    int j=0;
+    while (i<strlen(a) && j<strlen(b)){
+        if (a[i] == b[j]){
+            i++;
+            j=0;
+        }
+        else{
+            j++;
+        }
+    }
+    if (i==strlen(a)){
+        return 0;
+    }
+    return -1;
+}
 
 struct acl* initACL(){
     // read acl file and store it in a data structure
@@ -71,6 +93,21 @@ struct acl* initACL(){
     return aclList;
 }
 
+int checkAcessPerms(int ownerid){
+    // check if the user is root or owner of the file
+    // if yes then return 0 else return -1
+    return (getuid() == 0 || getuid() == ownerid) ? 0:-1;
+}
+
+int getOwnerID(char *path){
+    // get the owner id of the file
+    struct stat fileStat;
+    if(stat(path,&fileStat) == 0){
+        return fileStat.st_uid;
+    }
+    return -1;
+}
+
 char* getAbsolutePath(char *relativePath){
     char* absolutePath = realpath(relativePath, NULL);
 
@@ -80,4 +117,64 @@ char* getAbsolutePath(char *relativePath){
         perror("realpath");
     }
     return absolutePath;
+}
+
+int checkAcessPerms(char* path, char* user, char* perm){
+    // check for given path(i.e. file location) the user has the given permission or not
+    // hasPerms ? 1:0
+
+    if (getuid() == 0){ //if user is root then he has all the permissions
+        return 1;
+    }
+    char* defaultOwnerPerm = "rw"; //default owner permission
+    char* defaultOtherPerm = "r"; //default other permission
+    struct acl *aclList = initACL(); // get the acl list
+    if (aclList == NULL){
+        printf("Error in reading acl file\n");
+        return -1;
+    }
+    
+    int validPath = -1;
+    int validUser = -1;
+    int validPerm = -1;
+    int i, j, k;
+    for (i = 0; i<aclList->path.size() ; i++){ // check if the given path is present in the acl list, if not then default permissions will be checked
+        if (strcmp(aclList->path[i],path) == 0){
+            validPath = 1;
+            break;
+        }
+    }
+    if (validPath==1){
+        for (j=0 ; j<aclList->users[i].size() ; j++){ // check if the given user is present in the acl list, if not then default permissions will be checked
+            if (strcmp(aclList->users[i][j],user) == 0){
+                validUser = 1;
+                break;
+            }
+        }
+    }
+    if (validUser==1){
+        for (k=0 ; k<aclList->userPerms[i].size() ; k++){ // check if the given permission is present in the acl list, if not then return -1
+            if (cmp(aclList->userPerms[i][k],perm) == 0){
+                validPerm = 1;
+                return 1;
+            }
+        }
+        cout << perm << endl;
+        cout << aclList->userPerms[i][k-1] << endl;
+        return -11;
+    }
+
+    if (validUser==-1 || validPath==-1){
+        // check for default owner and other permissions
+        if (getuid() == getOwnerID(path)){ //check if user trying to access is owner of the file
+            if (cmp(perm,defaultOwnerPerm) == 0){ // check if the required permission is permisable with default owner permission
+                return 1;
+            }
+            return -12;
+        }
+        else if (cmp(perm,defaultOtherPerm) == 0){
+            return 1;
+        }
+        return -13;
+    }
 }

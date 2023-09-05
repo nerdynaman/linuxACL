@@ -10,20 +10,6 @@
 using namespace std;
 // char* path = "/Users/namanaggarwal/Desktop/IIITD/sem5/NSS1/Assignment1/acl.txt";
 
-int checkAcessPerms(int ownerid){
-    // check if the user is root or owner of the file
-    // if yes then return 0 else return -1
-    return (getuid() == 0 || getuid() == ownerid) ? 0:-1;
-}
-
-int getOwnerID(char *path){
-    // get the owner id of the file
-    struct stat fileStat;
-    if(stat(path,&fileStat) == 0){
-        return fileStat.st_uid;
-    }
-    return -1;
-}
 
 void writeACL(struct acl *aclList){
     // write the acl struct to acl file
@@ -61,21 +47,24 @@ int setACL(char *path,char *user,char *perms,char *flag){
     for (int i = 0; i < aclList->path.size(); i++){
         if (strcmp(aclList->path[i],path) == 0){
             // path exists in acl file
+            if (strcmp(flag,"x")==0){
+                // remove all user and perm for this path from acl file
+                // aclList->path.erase(aclList->path.begin()+i);
+                while(!aclList->users[i].empty()){
+                    aclList->users[i].pop_front();
+                }
+                aclList->users[i].push_back("");
+                while(!aclList->userPerms[i].empty()){
+                    aclList->userPerms[i].pop_front();
+                }
+                aclList->userPerms[i].push_back("");
+                // write the updated acl struct to acl file
+                writeACL(aclList);
+                return 0;
+            }
             // now we have to check if user exists in acl file
-            deque<char*> users = aclList->users[i];
-            deque<char*> userPerms = aclList->userPerms[i];
-            for (int j = 0; j < users.size(); j++){
-                if(strcmp(users[j],user) == 0){
-                    if (strcmp(flag,"x")==0){
-                        // remove the user from acl file
-                        aclList->users[i].erase(aclList->users[i].begin()+j);
-                        aclList->userPerms[i].erase(aclList->userPerms[i].begin()+j);
-                        // users.erase(users.begin()+j);
-                        // userPerms.erase(userPerms.begin()+j);
-                        // write the updated acl struct to acl file
-                        writeACL(aclList);
-                        return 0;
-                    }
+            for (int j = 0; j < aclList->users[i].size(); j++){
+                if(strcmp(aclList->users[i][j],user) == 0){
                     // user exists in acl file
                     // update the perms for the user
                     aclList->userPerms[i][j] = perms;
@@ -83,11 +72,6 @@ int setACL(char *path,char *user,char *perms,char *flag){
                     writeACL(aclList);
                     return 0;
                 }
-            }
-            if (strcmp(flag,"x")==0){
-                // user does not exist in acl file
-                // nothing to do
-                return 0;
             }
             // user does not exist in acl file
             // add the user to the acl file
@@ -98,6 +82,15 @@ int setACL(char *path,char *user,char *perms,char *flag){
             return 0;
         }
     }
-    // path does not exist in acl file
-    return -1;
+    // path does not exist in acl file so add it
+    aclList->path.push_back(path);
+    deque<char*> users;
+    users.push_back(user);
+    aclList->users.push_back(users);
+    deque<char*> userPerms;
+    userPerms.push_back(perms);
+    aclList->userPerms.push_back(userPerms);
+    // write the updated acl struct to acl file
+    writeACL(aclList);
+    return 0;
 }

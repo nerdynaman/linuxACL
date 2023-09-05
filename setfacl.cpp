@@ -24,33 +24,39 @@ int main(int argc, char *argv[]){
     }
 
     if (strcmp(argv[1],"-m") == 0){
+        if(access(argv[5],F_OK) == -1){
+            printf("File does not exist\n");
+            return 0;
+        }  
         int accessPerms = checkAcessPerms(getOwnerID(argv[5]));
         if(accessPerms == -1){
             printf("You do not have permission to set acl for this file\n");
             return 0;
         }
-        if(access(argv[5],F_OK) == -1){
-            printf("File does not exist\n");
-            return 0;
-        }  
         char *absPath;
         strcpy(absPath,getAbsolutePath(argv[5]));
         if(setACL(absPath,argv[3],argv[4],"")==-1){
             printf("Error setting acl\n");
             return 0;
         }
+        else{
+            printf("ACL set successfully\n");
+            return 0;
+        }
     }
     else if (strcmp(argv[1],"-x")==0){\
+        if (access(argv[4],F_OK) == -1){
+            printf("File does not exist\n");
+            return 0;
+        }
         int accessPerms = checkAcessPerms(getOwnerID(argv[4]));
         if(accessPerms == -1){
             printf("You do not have permission to set acl for this file\n");
             return 0;
         }
-        if (access(argv[4],F_OK) == -1){
-            printf("File does not exist\n");
-            return 0;
-        }
-        if(setACL(getAbsolutePath(argv[4]),argv[3],argv[4],"x")==-1){
+        char *absPath;
+        strcpy(absPath,getAbsolutePath(argv[4]));
+        if(setACL(absPath,argv[3],argv[4],"x")==-1){
             printf("Error removing acl\n");
             return 0;
         }
