@@ -44,7 +44,7 @@ int main(int argc, char *argv[]){
         struct passwd *pw = getpwuid(getuid()); //get the name of user calling this program
         int accessPerms = checkAcessPerms(absPath,pw->pw_name,(char*)"o",(char*)"");
         if(accessPerms < 0){
-            printf("You do not have permission to set acl for this file\n");
+            cout << accessPerms << "you do not have permission to set acl for this file" << endl;
             setuid(getuid());
             return 0;
         }

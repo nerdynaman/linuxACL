@@ -2,17 +2,17 @@
 
 
 int getfacl(int argc, char* argv[]){
-    struct acl* aclList = initACL();
     char* path = getAbsolutePath(argv[1]);
     if (path == NULL){
         printf("Error getting absolute path\n");
         return -1;
     }
+    struct acl* aclList = initACL(path);
     if (aclList == NULL){
         printf("Error initializing acl list\n");
         return -1;
     }
-    for (int i=0 ; i<aclList->users.size() ; i++){
+    for (int i=0 ; i<aclList->path.size() ; i++){
         if (strcmp(aclList->path[i], path) != 0){
             continue;
         }
