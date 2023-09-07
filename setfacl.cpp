@@ -37,14 +37,16 @@ int main(int argc, char *argv[]){
             setuid(getuid());
             return 0;
         }  
-        int accessPerms = checkAcessPerms(getOwnerID(argv[5]));
-        if(accessPerms == -1){
+        char* path =getAbsolutePath(argv[5]) ;
+        char* absPath = (char*)malloc(sizeof(char)*strlen(path));
+        strcpy(absPath,getAbsolutePath(argv[5]));
+        // int accessPerms = checkAcessPerms(getOwnerID(argv[5]));
+        int accessPerms = checkAcessPerms(absPath,argv[3],(char*)"o",(char*)"");
+        if(accessPerms < 0){
             printf("You do not have permission to set acl for this file\n");
             setuid(getuid());
             return 0;
         }
-        char *absPath;
-        strcpy(absPath,getAbsolutePath(argv[5]));
         if(setACL(absPath,argv[3],argv[4],"")==-1){
             printf("Error setting acl\n");
         }
@@ -58,14 +60,15 @@ int main(int argc, char *argv[]){
             setuid(getuid());
             return 0;
         }
-        int accessPerms = checkAcessPerms(getOwnerID(argv[4]));
+        char* path =getAbsolutePath(argv[4]) ;
+        char* absPath = (char*)malloc(sizeof(char)*strlen(path));
+        strcpy(absPath,getAbsolutePath(argv[4]));
+        int accessPerms = checkAcessPerms(absPath,argv[3],(char*)"o",(char*)"");
         if(accessPerms == -1){
             printf("You do not have permission to set acl for this file\n");
             setuid(getuid());
             return 0;
         }
-        char *absPath;
-        strcpy(absPath,getAbsolutePath(argv[4]));
         if(setACL(absPath,argv[3],argv[4],"x")==-1){
             printf("Error removing acl\n");
         }

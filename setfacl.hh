@@ -37,8 +37,10 @@ void writeACL(struct acl *aclList){
     fclose(fp);
 }
 
-int setACL(char *path,char *user,char *perms,char *flag){
+int setACL(char *pathA,char *user,char *perms,char *flag){
     // location/file : user1 user2 user3 : userPerms1 userPerms2 userPerms3 : group1 group2 group3 : rwx rwx rwx
+    char* path = (char*)malloc(sizeof(char)*strlen(pathA));
+    strcpy(path,pathA);
     struct acl *aclList = initACL();
     if (aclList == NULL){
         printf("Error initializing acl list\n");
@@ -53,11 +55,11 @@ int setACL(char *path,char *user,char *perms,char *flag){
                 while(!aclList->users[i].empty()){
                     aclList->users[i].pop_front();
                 }
-                aclList->users[i].push_back("");
+                aclList->users[i].push_back((char*)"");
                 while(!aclList->userPerms[i].empty()){
                     aclList->userPerms[i].pop_front();
                 }
-                aclList->userPerms[i].push_back("");
+                aclList->userPerms[i].push_back((char*)"");
                 // write the updated acl struct to acl file
                 writeACL(aclList);
                 return 0;

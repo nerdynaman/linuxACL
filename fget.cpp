@@ -16,12 +16,12 @@ int main(int argc, char* argv[]){
     }
 
     struct passwd *pw = getpwuid((uid_t) getuid()); //get the name of user calling this program
-    cout << "User: " << pw->pw_name << endl;
+    // cout << "User: " << pw->pw_name << endl;
     // copy absPath to a new char array
     char* absPath = (char*)malloc(sizeof(char)*strlen(getAbsolutePath(argv[1])));
     strcpy(absPath,getAbsolutePath(argv[1]));
 
-    int res = checkAcessPerms(absPath, pw->pw_name,"r"); //check if the user has write permission for the given file
+    int res = checkAcessPerms(absPath, pw->pw_name,"r",""); //check if the user has write permission for the given file
     if (res < 0){
         cout << res << " "; //print the error code
         cout<<"You do not have permission to read to this file"<<endl;
@@ -41,5 +41,7 @@ int main(int argc, char* argv[]){
         return 0;
     }
     cout<<content<<endl;
+    fclose(fp);
+    setuid(getuid());
     return 0;
 }

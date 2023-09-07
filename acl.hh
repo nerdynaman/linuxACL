@@ -12,7 +12,7 @@ struct acl{
     deque<deque<char*> > users;
     deque<deque<char*> > userPerms;
 };
-char* path = "/Users/namanaggarwal/Desktop/IIITD/sem5/NSS1/Assignment1/acl.txt";
+char* path = (char*)"/Users/namanaggarwal/Desktop/IIITD/sem5/NSS1/Assignment1/acl.txt";
 
 int cmp(char* a, char* b){
     // check if characters of a is part of b
@@ -90,6 +90,7 @@ struct acl* initACL(){
         aclList->userPerms.push_back(userPerms);
     }
     fclose(fp);
+    free(line);
     return aclList;
 }
 
@@ -119,15 +120,16 @@ char* getAbsolutePath(char *relativePath){
     return absolutePath;
 }
 
-int checkAcessPerms(char* path, char* user, char* perm){
+int checkAcessPerms(char* path, char* user, char* perm, char* type){
     // check for given path(i.e. file location) the user has the given permission or not
     // hasPerms ? 1:0
-
     if (getuid() == 0){ //if user is root then he has all the permissions
         return 0;
     }
-    char* defaultOwnerPerm = "rw"; //default owner permission
-    char* defaultOtherPerm = "r"; //default other permission
+    char* defaultOwnerPermFile =(char*) "rw"; //default owner permission
+    char* defaultOtherPermFile =(char*) "r"; //default other permission
+    char* defaultOwnerPermDir = (char*)"rwx"; //default owner permission
+    char* defaultOtherPermDir = (char*)"x"; //default other permission
     struct acl *aclList = initACL(); // get the acl list
     if (aclList == NULL){
         printf("Error in reading acl file\n");
@@ -163,15 +165,28 @@ int checkAcessPerms(char* path, char* user, char* perm){
 
     if (validUser==-1 || validPath==-1){
         // check for default owner and other permissions
+        if (strcmp(type,"d") == 0){
+            if (getuid() == getOwnerID(path)){ //check if user trying to access is owner of the file
+                if (cmp(perm,defaultOwnerPermDir) == 0){ // check if the required permission is permisable with default owner permission
+                    return 0;
+                }
+                return -15;
+            }
+            else if (cmp(perm,defaultOtherPermDir) == 0){
+                return 0;
+            }
+            return -16;
+        }
         if (getuid() == getOwnerID(path)){ //check if user trying to access is owner of the file
-            if (cmp(perm,defaultOwnerPerm) == 0){ // check if the required permission is permisable with default owner permission
+            if (cmp(perm,defaultOwnerPermFile) == 0){ // check if the required permission is permisable with default owner permission
                 return 0;
             }
             return -13;
         }
-        else if (cmp(perm,defaultOtherPerm) == 0){
+        else if (cmp(perm,defaultOtherPermFile) == 0){
             return 0;
         }
         return -14;
     }
+    return -19;
 }
