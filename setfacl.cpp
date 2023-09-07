@@ -48,6 +48,8 @@ int main(int argc, char *argv[]){
             setuid(getuid());
             return 0;
         }
+        // before setting acl switch uid of actual owner of file
+        setuid(getOwnerID(argv[5]));
         if(setACL(absPath,argv[3],argv[4],"")==-1){
             printf("Error setting acl\n");
         }
