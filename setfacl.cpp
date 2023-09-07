@@ -41,7 +41,8 @@ int main(int argc, char *argv[]){
         char* absPath = (char*)malloc(sizeof(char)*strlen(path));
         strcpy(absPath,getAbsolutePath(argv[5]));
         // int accessPerms = checkAcessPerms(getOwnerID(argv[5]));
-        int accessPerms = checkAcessPerms(absPath,argv[3],(char*)"o",(char*)"");
+        struct passwd *pw = getpwuid(getuid()); //get the name of user calling this program
+        int accessPerms = checkAcessPerms(absPath,pw->pw_name,(char*)"o",(char*)"");
         if(accessPerms < 0){
             printf("You do not have permission to set acl for this file\n");
             setuid(getuid());
@@ -54,24 +55,25 @@ int main(int argc, char *argv[]){
             printf("ACL set successfully\n");
         }
     }
-    else if (strcmp(argv[1],"-x")==0){\
-        if (access(argv[4],F_OK) == -1){
-            printf("File does not exist\n");
-            setuid(getuid());
-            return 0;
-        }
-        char* path =getAbsolutePath(argv[4]) ;
-        char* absPath = (char*)malloc(sizeof(char)*strlen(path));
-        strcpy(absPath,getAbsolutePath(argv[4]));
-        int accessPerms = checkAcessPerms(absPath,argv[3],(char*)"o",(char*)"");
-        if(accessPerms == -1){
-            printf("You do not have permission to set acl for this file\n");
-            setuid(getuid());
-            return 0;
-        }
-        if(setACL(absPath,argv[3],argv[4],"x")==-1){
-            printf("Error removing acl\n");
-        }
+    else if (strcmp(argv[1],"-x")==0){
+        // if (access(argv[4],F_OK) == -1){
+        //     printf("File does not exist\n");
+        //     setuid(getuid());
+        //     return 0;
+        // }
+        // char* path =getAbsolutePath(argv[4]) ;
+        // char* absPath = (char*)malloc(sizeof(char)*strlen(path));
+        // strcpy(absPath,getAbsolutePath(argv[4]));
+        // int accessPerms = checkAcessPerms(absPath,argv[3],(char*)"o",(char*)"");
+        // if(accessPerms == -1){
+        //     printf("You do not have permission to set acl for this file\n");
+        //     setuid(getuid());
+        //     return 0;
+        // }
+        // if(setACL(absPath,argv[3],argv[4],"x")==-1){
+        //     printf("Error removing acl\n");
+        // }
+        cout << "currently in development" << endl;
     }
     else if (strcmp(argv[1],"-b") == 0){
     }
