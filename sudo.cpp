@@ -1,5 +1,6 @@
 #include "acl.hh"
 #include <pwd.h>
+#include <pthread.h>
 int main(int argc, char* argv[]){
 	if (argc < 2){ // check if command given is valid
 		cout << "Usage: sudo <command>" << endl;
@@ -9,8 +10,12 @@ int main(int argc, char* argv[]){
 	char* absPath = (char*)malloc(sizeof(char)*strlen(path));
 	strcpy(absPath,getAbsolutePath(argv[1]));
 	size_t userid = getOwnerID(absPath); // check owner of file
+	int callerID = getuid(); // get uid of caller
 	if (userid != 0){ 
 		setuid(userid); // if not root then switch to owner of file
+	}
+	else{
+		setuid(0); // else switch to root
 	}
 	struct passwd *pw = getpwuid(userid); // get username from uid
 	int perm = checkAcessPerms(absPath,pw->pw_name,(char*)"x",(char*)""); // check if file owner has execute permission
@@ -24,7 +29,13 @@ int main(int argc, char* argv[]){
 		args[i-1] = argv[i];
 	}	
 	args[argc-1] = NULL;
-	execv(path,args);
-
+	int a = fork();
+	if (a == 0){
+		execv(path,args);
+	}
+	else{
+		wait(NULL);
+		setuid(callerID);
+	}
 	return 0;
 }

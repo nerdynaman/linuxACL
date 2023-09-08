@@ -26,6 +26,7 @@ int main(int argc, char *argv[]){
     }
     const char *user = argv[3];
     struct passwd *pw = getpwnam(user);
+    int callerID = getuid();
     if (pw == NULL){
         printf("User does not exist\n");
         setuid(getuid());
@@ -82,6 +83,6 @@ int main(int argc, char *argv[]){
     else{
         printf("Invalid flag\n");
     }
-    setuid(getuid());
+    setuid(callerID);
     return 0;
 }
