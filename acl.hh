@@ -160,11 +160,13 @@ int checkAcessPerms(char* path, char* user, char* perm, char* type){
         }
         return -12;
     }
-
+    if (strcmp(type,"o")==0){
+        return -1;
+    }
     if (validUser==-1 || validPath==-1){
         // check for default owner and other permissions
         if (strcmp(type,"d") == 0){
-            if (getuid() == getOwnerID(path)){ //check if user trying to access is owner of the file
+            if (checkAcessPerms(path,user,(char*)"o","o") == 0){ //check if the user trying to access is owner of the dir
                 if (cmp(perm,defaultOwnerPermDir) == 0){ // check if the required permission is permisable with default owner permission
                     return 0;
                 }
@@ -175,7 +177,7 @@ int checkAcessPerms(char* path, char* user, char* perm, char* type){
             }
             return -16;
         }
-        if (getuid() == getOwnerID(path)){ //check if user trying to access is owner of the file
+        if (checkAcessPerms(path,user,(char*)"o","o") == 0){ //check if user trying to access is owner of the file
             if (cmp(perm,defaultOwnerPermFile) == 0){ // check if the required permission is permisable with default owner permission
                 return 0;
             }
