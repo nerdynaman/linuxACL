@@ -11,10 +11,11 @@ int main(int argc, char* argv[]){
         setuid(getuid());
         return 0;
     }
+    int callerID = getuid(); // get uid of caller
     // check the perms for writing in the current directory
     char *path = getcwd(NULL,0);
     // getting current username
-    struct passwd *pw = getpwuid(getuid());
+    struct passwd *pw = getpwuid(callerID);
     char *username = pw->pw_name;
 // check if the user has write perms in the current directory
     int perms = checkAcessPerms(path,username,(char*)"w",(char*)"d"); 
@@ -22,6 +23,7 @@ int main(int argc, char* argv[]){
         cout<<"You do not have permission to create directory"<<endl;
         return 0;
     }
+    setuid(getOwnerID(path));
     // create the directory
     int status = mkdir(argv[1],0751);
     path = getAbsolutePath(argv[1]);
@@ -34,5 +36,5 @@ int main(int argc, char* argv[]){
         return 0;
     }
     cout<<"Directory created successfully"<<endl;
-    setuid(getuid());
+    setuid(callerID);
 }

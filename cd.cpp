@@ -14,8 +14,10 @@ int main(int argc, char* argv[]){
         printf("Error getting absolute path\n");
         return -1;
     }
+    int callerID = getuid(); // get uid of caller
+    setuid(getOwnerID(path));
     // check if the directory exists
-    struct passwd *pw = getpwuid((uid_t) getuid()); //get the name of user calling this program
+    struct passwd *pw = getpwuid((uid_t) callerID); //get the name of user calling this program
     int perm = checkAcessPerms(absPath, pw->pw_name,"x","d");
     if (perm < 0){
         printf("You do not have permission to change directory\n");
@@ -27,6 +29,6 @@ int main(int argc, char* argv[]){
         return 0;
     }
     cout << "Current directory: " << getcwd(NULL,0) << endl;
-    setuid(getuid());
+    setuid(callerID);
     return 0;
 }

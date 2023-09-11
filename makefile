@@ -13,6 +13,13 @@ target:
 	sudo chmod u+s getfacl
 	sudo chmod u+s setfacl
 	sudo chmod u+s sudo
+	export create_dir=$(PWD)/create_dir
+	export cd=$(PWD)/cd
+	export fget=$(PWD)/fget
+	export fput=$(PWD)/fput
+	export getfacl=$(PWD)/getfacl
+	export setfacl=$(PWD)/setfacl
+	export sudo=$(PWD)/sudo
 clean:
 	sudo rm cd
 	sudo rm create_dir

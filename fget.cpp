@@ -14,8 +14,8 @@ int main(int argc, char* argv[]){
         setuid(getuid());
         return 0;
     }
-
-    struct passwd *pw = getpwuid((uid_t) getuid()); //get the name of user calling this program
+    int callerID = getuid(); // get uid of caller
+    struct passwd *pw = getpwuid((uid_t) callerID); //get the name of user calling this program
     // cout << "User: " << pw->pw_name << endl;
     // copy absPath to a new char array
     char* absPath = (char*)malloc(sizeof(char)*strlen(getAbsolutePath(argv[1])));
@@ -25,23 +25,24 @@ int main(int argc, char* argv[]){
     if (res < 0){
         cout << res << " "; //print the error code
         cout<<"You do not have permission to read to this file"<<endl;
-        setuid(getuid());
+        setuid(callerID);
         return 0;
     }
+    setuid(getOwnerID(argv[1]));
     FILE *fp = fopen(argv[1],"r"); //open the file
     if (fp == NULL){
         cout<<"Error opening file"<<endl;
-        setuid(getuid());
+        setuid(callerID);
         return 0;
     }
     char* content = (char*)malloc(sizeof(char)*100);
     if (fgets(content,100,fp) == NULL){ //write the content to the file
         cout<<"Error reading file"<<endl;
-        setuid(getuid());
+        setuid(callerID);
         return 0;
     }
     cout<<content<<endl;
     fclose(fp);
-    setuid(getuid());
+    setuid(callerID);
     return 0;
 }

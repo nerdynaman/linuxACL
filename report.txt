@@ -1,0 +1,39 @@
+*/
+attacks prevented : 
+          1)switching back to uid of caller after execution, so that if attacker gets access to root/owner of file, he can't do much
+          2)only root or fileowner can change acl
+          3)allowing to add acl only for users which exist so new users when created will not have any acl
+          4)before creating file or dir check if user has perms to write in that dir
+          5)can't set acl for files or dir which does not exists
+          6)if file is deleted then acl is also deleted 
+*/
+Assumptions:
+*/
+owner is the fourth bit in perms field as 'o'
+*/
+update writeAcl to not print on stdout
+*/
+for sudo program have to pass location of binary file
+*/
+fget can only read 100 bytes at a time
+*/
+fput program in case of no file exists only accepts file name upto 6 characters
+*/
+for create_dir && fput programs if file or dir is to be created then actual owner on OS is set as owner of dir
+*/
+programs should be run in immediate directory of file or dir
+*/
+valid ownership of any object can only be checked from acl and not from OS
+*/
+mere availability of o perm with any user does not mean that user has all perms for object
+*/
+if acls dont exist then we refer to default permissions for file
+*/
+usage : 
+./create_dir <dir_name> 
+./cd <dir_name>
+./fput <file_name>
+./fget <file_name>
+./setfacl [-m|-x|-b] u|g|o <user|group> <rwx> <file> {only m flag is implemented and only for owner}
+./getfacl <file>
+*/
