@@ -6,6 +6,11 @@ int main(int argc, char* argv[]){
 		cout << "Usage: sudo <command>" << endl;
 		return 0;
 	}
+	// check if file exists
+	if (access(argv[1],F_OK) == -1){
+		cout << "File does not exist" << endl;
+		return 0;
+	}
 	char* path = getAbsolutePath(argv[1]); // get absolute path of file from relative path
 	char* absPath = (char*)malloc(sizeof(char)*strlen(path));
 	strcpy(absPath,getAbsolutePath(argv[1]));
