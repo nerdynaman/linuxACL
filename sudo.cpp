@@ -16,13 +16,16 @@ int main(int argc, char* argv[]){
 	strcpy(absPath,getAbsolutePath(argv[1]));
 	size_t userid = getOwnerID(absPath); // check owner of file
 	int callerID = getuid(); // get uid of caller
-	if (userid != 0){ 
-		setuid(userid); // if not root then switch to owner of file
-	}
-	else{
-		setuid(0); // else switch to root
-	}
-	struct passwd *pw = getpwuid(userid); // get username from uid
+	// if (userid != 0){ 
+	// 	setuid(userid); // if not root then switch to owner of file
+	// }
+	// else{
+	// 	setuid(0); // else switch to root
+	// }
+	//if want to check acl via fileOwner
+	// struct passwd *pw = getpwuid(userid); // get username from uid
+
+	struct passwd *pw = getpwuid(callerID); // get username from uid
 	int perm = checkAcessPerms(absPath,pw->pw_name,(char*)"x",(char*)""); // check if file owner has execute permission
 	if (perm == -1){
 		cout << "You do not have permission to execute this file" << endl;
