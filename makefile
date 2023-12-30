@@ -1,11 +1,11 @@
 target:
-	sudo g++ cd.cpp -o cd
-	sudo g++ create_dir.cpp -o create_dir
-	sudo g++ fget.cpp -o fget
-	sudo g++ fput.cpp -o fput
-	sudo g++ getfacl.cpp -o getfacl
-	sudo g++ setfacl.cpp -o setfacl
-	sudo g++ sudo.cpp -o sudo
+	sudo g++ cd.c -o cd
+	sudo g++ create_dir.c -o create_dir
+	sudo g++ fget.c -o fget
+	sudo g++ fput.c -o fput
+	sudo g++ getfacl.c -o getfacl
+	sudo g++ setfacl.c -o setfacl
+	sudo g++ sudo.c -o sudo
 	sudo chmod u+s cd
 	sudo chmod u+s create_dir
 	sudo chmod u+s fget
